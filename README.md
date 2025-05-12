@@ -15,25 +15,19 @@ DW_Project_Kelompok22/
 
 ## Tentang Project
 
-Project ini merupakan bagian dari mata kuliah Data Warehouse. Project ini bertujuan untuk [jelaskan tujuan project disini].
+Project ini merupakan bagian dari mata kuliah Data Warehouse. Project ini bertujuan untuk membuat sistem data warehouse yang dapat mengelola dan menganalisis data dari berbagai sumber, khususnya di industri pertambangan dan sumber daya mineral.
+Project ini mencakup beberapa misi yang berfokus pada pemodelan data, ETL (Extract, Transform, Load), dan visualisasi data.
 
 ## Anggota Kelompok
 
-- Anggota 1 (NIM)
-- Anggota 2 (NIM)
-- Anggota 3 (NIM)
-- Anggota 4 (NIM)
+- Ericson Chandra Sihombing (121450026)  
+- Ramadhita Atifa Hendri (121450131)  
+- Eggi Satria (122450032)  
+- Nabila Anilda Zahrah (122450063)  
+- Syalaisha Andini Putriansyah (122450111)  
 
 ## Cara Penggunaan
 
 1. Clone repository ini
 2. Navigasi ke folder yang diinginkan
 3. Ikuti petunjuk pada README.md di masing-masing folder
-
-## Kontribusi
-
-Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk detail tentang kode etik dan proses untuk mengajukan pull request kepada kami.
-
-## Lisensi
-
-Project ini dilisensikan di bawah [nama lisensi] - lihat file [LICENSE](LICENSE) untuk detail.
