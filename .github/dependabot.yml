@@ -1,0 +1,68 @@
+# Dependabot configuration untuk PT XYZ Data Warehouse
+# Mengupdate dependencies secara otomatis untuk keamanan dan performa
+
+version: 2
+updates:
+  # 🐳 Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "🐳 docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automerge"
+
+  # 🐍 Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "🐍 python"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+    # Hanya update security patches untuk production
+    versioning-strategy: increase-if-necessary
+
+  # 📊 GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "🔄 actions"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automerge"
+
+  # 🔧 Composer dependencies (jika ada)
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "🔧 composer"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "php"

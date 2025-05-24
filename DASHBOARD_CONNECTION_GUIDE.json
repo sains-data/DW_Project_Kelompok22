@@ -1,0 +1,23 @@
+{
+  "grafana": {
+    "datasource_type": "Microsoft SQL Server",
+    "host": "sqlserver:1433",
+    "database": "PTXYZ_DataWarehouse",
+    "user": "sa",
+    "password": "PTXYZDataWarehouse2025",
+    "ssl_mode": "disable"
+  },
+  "superset": {
+    "connection_string": "mssql+pyodbc://sa:PTXYZDataWarehouse2025@sqlserver:1433/PTXYZ_DataWarehouse?driver=ODBC+Driver+17+for+SQL+Server",
+    "database_name": "PT XYZ Data Warehouse",
+    "expose_in_sqllab": true
+  },
+  "metabase": {
+    "database_type": "SQL Server",
+    "host": "sqlserver",
+    "port": 1433,
+    "database_name": "PTXYZ_DataWarehouse",
+    "username": "sa",
+    "password": "PTXYZDataWarehouse2025"
+  }
+}

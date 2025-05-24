@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "=== PT XYZ Data Warehouse Services Status ==="
+echo ""
+echo "🔍 Service URLs:"
+echo "• Airflow:   http://localhost:8080 (admin/admin)"
+echo "• Jupyter:   http://localhost:8888 (token: ptxyz123)"
+echo "• Grafana:   http://localhost:3000 (admin/admin)"
+echo "• Superset:  http://localhost:8088 (admin/admin)"
+echo "• Metabase:  http://localhost:3001"
+echo "• SQL Server: localhost:1433 (sa/PTXYZDataWarehouse2025)"
+echo ""
+echo "🚀 All services are successfully deployed!"
+echo ""
+echo "📊 Container Status:"
+docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"

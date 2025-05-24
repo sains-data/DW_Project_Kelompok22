@@ -1,0 +1,58 @@
+{
+  "equipment_efficiency": {
+    "title": "Equipment Efficiency Over Time",
+    "description": "Shows equipment efficiency percentage over time by equipment type",
+    "sql": "\nSELECT \n  dt.date as time,\n  eq.equipment_type,\n  AVG(CAST(feu.operating_hours AS FLOAT) / (feu.operating_hours + feu.downtime_hours) * 100) as efficiency\nFROM fact.FactEquipmentUsage feu\nJOIN dim.DimTime dt ON feu.time_key = dt.time_key\nJOIN dim.DimEquipment eq ON feu.equipment_key = eq.equipment_key\nWHERE dt.date >= DATEADD(day, -30, GETDATE())\nGROUP BY dt.date, eq.equipment_type\nORDER BY dt.date\n            ",
+    "expected_columns": [
+      "time",
+      "equipment_type",
+      "efficiency"
+    ],
+    "chart_type": "time_series"
+  },
+  "production_by_material": {
+    "title": "Production by Material Type",
+    "description": "Total production volume grouped by material type",
+    "sql": "\nSELECT \n  dm.material_type,\n  SUM(fp.produced_volume) as total_production\nFROM fact.FactProduction fp\nJOIN dim.DimMaterial dm ON fp.material_key = dm.material_key\nJOIN dim.DimTime dt ON fp.time_key = dt.time_key\nWHERE dt.date >= DATEADD(day, -30, GETDATE())\nGROUP BY dm.material_type\nORDER BY total_production DESC\n            ",
+    "expected_columns": [
+      "material_type",
+      "total_production"
+    ],
+    "chart_type": "pie"
+  },
+  "budget_variance": {
+    "title": "Top Projects by Budget Variance",
+    "description": "Projects with highest budget variance (actual vs budgeted costs)",
+    "sql": "\nSELECT TOP 10\n  dp.project_name,\n  ds.site_name,\n  ds.region,\n  SUM(fft.budgeted_cost) as budgeted_cost,\n  SUM(fft.actual_cost) as actual_cost,\n  SUM(fft.variance_amount) as variance,\n  CASE \n    WHEN SUM(fft.budgeted_cost) > 0 \n    THEN (SUM(fft.variance_amount) / SUM(fft.budgeted_cost)) * 100 \n    ELSE 0 \n  END as variance_percentage\nFROM fact.FactFinancialTransaction fft\nJOIN dim.DimProject dp ON fft.project_key = dp.project_key\nJOIN dim.DimSite ds ON fft.site_key = ds.site_key\nJOIN dim.DimTime dt ON fft.time_key = dt.time_key\nWHERE dt.date >= DATEADD(day, -30, GETDATE())\nGROUP BY dp.project_name, ds.site_name, ds.region\nORDER BY ABS(variance) DESC\n            ",
+    "expected_columns": [
+      "project_name",
+      "site_name",
+      "region",
+      "budgeted_cost",
+      "actual_cost",
+      "variance",
+      "variance_percentage"
+    ],
+    "chart_type": "table"
+  },
+  "daily_production_by_region": {
+    "title": "Daily Production by Region",
+    "description": "Daily production volumes grouped by region",
+    "sql": "\nSELECT \n  dt.date as time,\n  ds.region,\n  SUM(fp.produced_volume) as total_production\nFROM fact.FactProduction fp\nJOIN dim.DimTime dt ON fp.time_key = dt.time_key\nJOIN dim.DimSite ds ON fp.site_key = ds.site_key\nWHERE dt.date >= DATEADD(day, -30, GETDATE())\nGROUP BY dt.date, ds.region\nORDER BY dt.date\n            ",
+    "expected_columns": [
+      "time",
+      "region",
+      "total_production"
+    ],
+    "chart_type": "time_series_bars"
+  },
+  "overall_efficiency": {
+    "title": "Overall Equipment Efficiency (Last 7 Days)",
+    "description": "Average equipment efficiency across all equipment",
+    "sql": "\nSELECT \n  AVG(CAST(feu.operating_hours AS FLOAT) / (feu.operating_hours + feu.downtime_hours) * 100) as overall_efficiency\nFROM fact.FactEquipmentUsage feu\nJOIN dim.DimTime dt ON feu.time_key = dt.time_key\nWHERE dt.date >= DATEADD(day, -7, GETDATE())\n            ",
+    "expected_columns": [
+      "overall_efficiency"
+    ],
+    "chart_type": "gauge"
+  }
+}

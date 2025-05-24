@@ -1,0 +1,89 @@
+name: 📝 Documentation Enhancement
+description: Suggest improvements to project documentation
+title: "[DOCS] "
+labels: ["documentation", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve our documentation! Please fill out this template to suggest documentation enhancements.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs improvement?
+      options:
+        - README.md
+        - Installation Guide
+        - Configuration Guide
+        - API Documentation
+        - User Manual
+        - Developer Guide
+        - Troubleshooting
+        - Security Documentation
+        - Contributing Guidelines
+        - Code Comments
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-issue
+    attributes:
+      label: Current Documentation Issue
+      description: What's wrong with the current documentation or what's missing?
+      placeholder: The current documentation is unclear about... / Missing information on...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Proposed Improvement
+      description: How would you improve the documentation?
+      placeholder: The documentation should include... / It would be clearer if...
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-audience
+    attributes:
+      label: Target Audience
+      description: Who is the primary audience for this documentation?
+      placeholder: New users, developers, system administrators, etc.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this documentation improvement?
+      options:
+        - Low - Minor improvement
+        - Medium - Would help users
+        - High - Important for adoption
+        - Critical - Blocking user success
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, examples, or references that would help.
+      placeholder: Links to good examples, specific use cases, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

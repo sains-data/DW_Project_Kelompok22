@@ -1,0 +1,98 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "PT XYZ Mining Operations Dashboard",
+    "tags": ["ptxyz", "mining", "production"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Daily Production Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "SELECT SUM(volume_produced) as total_production FROM fact_production WHERE time_key >= DATEADD(day, -1, GETDATE())",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Equipment Utilization",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "SELECT equipment_name, AVG(operating_hours/(operating_hours + idle_hours) * 100) as utilization FROM fact_equipment_usage feu JOIN dim_equipment de ON feu.equipment_key = de.equipment_key GROUP BY equipment_name",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Production Trend",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "SELECT dt.full_date, SUM(fp.volume_produced) as daily_production FROM fact_production fp JOIN dim_time dt ON fp.time_key = dt.time_key WHERE dt.full_date >= DATEADD(month, -1, GETDATE()) GROUP BY dt.full_date ORDER BY dt.full_date",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 8
+        }
+      }
+    ],
+    "time": {
+      "from": "now-30d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": []
+    },
+    "refresh": "5s",
+    "schemaVersion": 27,
+    "version": 0,
+    "links": []
+  }
+}
