@@ -28,7 +28,7 @@ def get_sql_connection():
             port=1433,
             database='PTXYZ_DataWarehouse',
             user='sa',
-            password='PTXYZDataWarehouse2025',
+            password='YourSecurePassword123!',
             timeout=30
         )
         return conn
@@ -50,7 +50,7 @@ def extract_and_load_to_staging():
         
         # Load Equipment Usage data
         logging.info("Loading Equipment Usage data...")
-        equipment_df = pd.read_csv('Dataset/dataset_alat_berat_dw.csv')
+        equipment_df = pd.read_csv('data/raw/Dataset/dataset_alat_berat_dw.csv')
         equipment_df['purchase_date'] = pd.to_datetime(equipment_df['purchase_date']).dt.date
         equipment_df['date'] = pd.to_datetime(equipment_df['date']).dt.date
         equipment_df['created_at'] = pd.to_datetime(equipment_df['created_at'])
@@ -74,7 +74,7 @@ def extract_and_load_to_staging():
         
         # Load Production data
         logging.info("Loading Production data...")
-        production_df = pd.read_csv('Dataset/dataset_production.csv')
+        production_df = pd.read_csv('data/raw/Dataset/dataset_production.csv')
         production_df['date'] = pd.to_datetime(production_df['date']).dt.date
         production_df['hire_date'] = pd.to_datetime(production_df['hire_date']).dt.date
         
@@ -97,7 +97,7 @@ def extract_and_load_to_staging():
         
         # Load Financial Transaction data
         logging.info("Loading Financial Transaction data...")
-        transaction_df = pd.read_csv('Dataset/dataset_transaksi.csv')
+        transaction_df = pd.read_csv('data/raw/Dataset/dataset_transaksi.csv')
         transaction_df['created_at'] = pd.to_datetime(transaction_df['created_at'])
         transaction_df['date'] = pd.to_datetime(transaction_df['date'], format='%Y%m%d').dt.date
         transaction_df['start_date'] = pd.to_datetime(transaction_df['start_date']).dt.date
