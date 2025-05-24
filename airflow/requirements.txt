@@ -2,7 +2,7 @@ pandas==2.1.4
 pyodbc==5.0.1
 sqlalchemy==1.4.53
 pymssql==2.2.11
-openpyxl==3.1.2
+openpyxl==3.1.5
 xlrd==2.0.1
 python-dotenv==1.0.0
 requests==2.31.0
