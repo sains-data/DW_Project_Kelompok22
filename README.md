@@ -1,4 +1,4 @@
-# **🏭 PT XYZ Data Warehouse - Complete Docker Environment
+# 🏭 **PT XYZ Data Warehouse - Complete Docker Environment
 
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-017CEE?style=for-the-badge&logo=apache%20airflow&logoColor=white)](https://airflow.apache.org/)
