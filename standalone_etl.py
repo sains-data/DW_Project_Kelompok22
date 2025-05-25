@@ -7,6 +7,7 @@ This script runs the complete ETL pipeline without Airflow dependencies
 import pandas as pd
 import pymssql
 import logging
+import logging
 import time
 import os
 
@@ -28,7 +29,7 @@ def get_sql_connection():
             port=1433,
             database='PTXYZ_DataWarehouse',
             user='sa',
-            password='YourSecurePassword123!',
+            password='PTXYZSecure123!',
             timeout=30
         )
         return conn
