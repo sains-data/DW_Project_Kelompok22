@@ -1,0 +1,470 @@
+{
+  "dashboard_name": "PT XYZ Data Warehouse - Comprehensive Business Intelligence",
+  "version": "2.0",
+  "created_date": "2025-05-25",
+  "description": "Complete dashboard configurations for PT XYZ mining data warehouse with advanced OLAP analytics",
+  
+  "executive_dashboard": {
+    "title": "PT XYZ Executive Dashboard",
+    "description": "High-level KPIs and trends for executive decision making",
+    "panels": [
+      {
+        "id": "exec_kpi_production",
+        "title": "Monthly Production Volume",
+        "type": "big_number",
+        "query": "SELECT total_production_current as value, production_growth_percent as change FROM analytics.vw_ExecutiveKPIs",
+        "visualization": {
+          "format": "number",
+          "prefix": "",
+          "suffix": " tons",
+          "show_trend": true
+        }
+      },
+      {
+        "id": "exec_kpi_efficiency",
+        "title": "Equipment Efficiency",
+        "type": "big_number", 
+        "query": "SELECT ROUND(avg_equipment_efficiency_current * 100, 1) as value, efficiency_improvement_percent as change FROM analytics.vw_ExecutiveKPIs",
+        "visualization": {
+          "format": "percentage",
+          "show_trend": true,
+          "color_scheme": "green_red"
+        }
+      },
+      {
+        "id": "exec_kpi_budget",
+        "title": "Budget Variance",
+        "type": "big_number",
+        "query": "SELECT budget_variance_percent as value FROM analytics.vw_ExecutiveKPIs", 
+        "visualization": {
+          "format": "percentage",
+          "color_scheme": "red_green_inverse"
+        }
+      },
+      {
+        "id": "exec_kpi_utilization",
+        "title": "Equipment Utilization",
+        "type": "big_number",
+        "query": "SELECT ROUND(overall_utilization_percent, 1) as value FROM analytics.vw_ExecutiveKPIs",
+        "visualization": {
+          "format": "percentage",
+          "color_scheme": "green_red"
+        }
+      },
+      {
+        "id": "exec_monthly_trends",
+        "title": "Monthly Production & Efficiency Trends",
+        "type": "line_chart",
+        "query": "SELECT CONCAT(year, '-', RIGHT('0' + CAST(month AS VARCHAR), 2)) as period, monthly_production, avg_efficiency * 100 as efficiency_percent FROM analytics.vw_MonthlyTrends ORDER BY year, month",
+        "visualization": {
+          "x_axis": "period",
+          "y_axes": ["monthly_production", "efficiency_percent"],
+          "dual_axis": true
+        }
+      },
+      {
+        "id": "exec_budget_variance_trend",
+        "title": "Budget Performance Trend",
+        "type": "area_chart",
+        "query": "SELECT CONCAT(year, '-', RIGHT('0' + CAST(month AS VARCHAR), 2)) as period, total_budget, total_actual_cost, budget_utilization_percent FROM analytics.vw_MonthlyTrends ORDER BY year, month",
+        "visualization": {
+          "x_axis": "period",
+          "y_axes": ["total_budget", "total_actual_cost"],
+          "fill_opacity": 0.3
+        }
+      },
+      {
+        "id": "exec_regional_performance",
+        "title": "Regional Performance Heatmap",
+        "type": "heatmap",
+        "query": "SELECT region, month_name, regional_avg_efficiency * 100 as efficiency FROM analytics.vw_RegionalPerformanceSummary WHERE year = YEAR(GETDATE())",
+        "visualization": {
+          "x_axis": "month_name",
+          "y_axis": "region",
+          "value": "efficiency",
+          "color_scheme": "red_yellow_green"
+        }
+      }
+    ]
+  },
+
+  "operations_dashboard": {
+    "title": "PT XYZ Operations Dashboard", 
+    "description": "Real-time operational monitoring and equipment performance",
+    "panels": [
+      {
+        "id": "ops_equipment_status",
+        "title": "Equipment Status Overview",
+        "type": "table",
+        "query": "SELECT equipment_name, equipment_type, site_name, performance_status, availability_status, ROUND(current_efficiency * 100, 1) as efficiency_percent, ROUND(utilization_percent, 1) as utilization, week_maintenance_cost FROM analytics.vw_EquipmentStatus ORDER BY current_efficiency DESC",
+        "visualization": {
+          "conditional_formatting": {
+            "performance_status": {
+              "Excellent": "green",
+              "Good": "yellow", 
+              "Fair": "orange",
+              "Needs Attention": "red"
+            }
+          }
+        }
+      },
+      {
+        "id": "ops_site_performance",
+        "title": "Site Production Performance",
+        "type": "bar_chart",
+        "query": "SELECT site_name, total_production, site_avg_efficiency * 100 as efficiency_percent FROM analytics.vw_SiteProductionPerformance ORDER BY total_production DESC",
+        "visualization": {
+          "x_axis": "site_name",
+          "y_axis": "total_production",
+          "color_metric": "efficiency_percent"
+        }
+      },
+      {
+        "id": "ops_hourly_production",
+        "title": "Hourly Production Rate (Last 7 Days)",
+        "type": "line_chart",
+        "query": "SELECT CONCAT(date, ' ', RIGHT('0' + CAST(hour_of_day AS VARCHAR), 2), ':00') as datetime, site_name, hourly_production FROM analytics.vw_HourlyOperationsSummary ORDER BY date, hour_of_day",
+        "visualization": {
+          "x_axis": "datetime",
+          "y_axis": "hourly_production",
+          "series": "site_name"
+        }
+      },
+      {
+        "id": "ops_equipment_efficiency",
+        "title": "Equipment Efficiency Distribution",
+        "type": "histogram",
+        "query": "SELECT ROUND(current_efficiency * 100, 0) as efficiency_bucket, COUNT(*) as equipment_count FROM analytics.vw_EquipmentStatus GROUP BY ROUND(current_efficiency * 100, 0) ORDER BY efficiency_bucket",
+        "visualization": {
+          "x_axis": "efficiency_bucket",
+          "y_axis": "equipment_count",
+          "bins": 20
+        }
+      },
+      {
+        "id": "ops_maintenance_alerts",
+        "title": "Maintenance Alerts",
+        "type": "alert_table",
+        "query": "SELECT equipment_name, site_name, maintenance_risk_level, cost_alert_level, recommendation FROM analytics.vw_MaintenancePrediction WHERE maintenance_risk_level IN ('High Risk', 'Medium Risk') ORDER BY CASE WHEN maintenance_risk_level = 'High Risk' THEN 1 ELSE 2 END",
+        "visualization": {
+          "alert_colors": {
+            "High Risk": "red",
+            "Medium Risk": "orange"
+          }
+        }
+      }
+    ]
+  },
+
+  "financial_dashboard": {
+    "title": "PT XYZ Financial Analytics",
+    "description": "Financial performance and cost analysis",
+    "panels": [
+      {
+        "id": "fin_cost_breakdown",
+        "title": "Cost Breakdown by Category",
+        "type": "pie_chart",
+        "query": "SELECT account_type, SUM(total_actual_cost) as total_cost FROM analytics.vw_CostAnalysis WHERE year = YEAR(GETDATE()) GROUP BY account_type",
+        "visualization": {
+          "label": "account_type",
+          "value": "total_cost"
+        }
+      },
+      {
+        "id": "fin_budget_variance",
+        "title": "Budget Variance by Site",
+        "type": "bar_chart",
+        "query": "SELECT site_name, total_budget, total_actual_cost, budget_status FROM analytics.vw_CostAnalysis WHERE year = YEAR(GETDATE()) GROUP BY site_name, total_budget, total_actual_cost, budget_status ORDER BY total_actual_cost DESC",
+        "visualization": {
+          "x_axis": "site_name",
+          "y_axes": ["total_budget", "total_actual_cost"],
+          "color_metric": "budget_status"
+        }
+      },
+      {
+        "id": "fin_profitability",
+        "title": "Profitability Analysis by Region",
+        "type": "scatter_plot",
+        "query": "SELECT region, estimated_revenue, estimated_profit, profit_margin_percent, roi_percent FROM analytics.vw_ProfitabilityAnalysis WHERE year = YEAR(GETDATE())",
+        "visualization": {
+          "x_axis": "estimated_revenue",
+          "y_axis": "estimated_profit", 
+          "size_metric": "profit_margin_percent",
+          "color_metric": "roi_percent"
+        }
+      },
+      {
+        "id": "fin_cost_per_unit",
+        "title": "Cost per Unit Produced Trend",
+        "type": "line_chart",
+        "query": "SELECT CONCAT(year, '-', month_name) as period, AVG(cost_per_unit_produced) as avg_cost_per_unit FROM analytics.vw_CostAnalysis WHERE year >= YEAR(GETDATE()) - 1 GROUP BY year, month, month_name ORDER BY year, month",
+        "visualization": {
+          "x_axis": "period",
+          "y_axis": "avg_cost_per_unit"
+        }
+      },
+      {
+        "id": "fin_budget_performance",
+        "title": "Budget Performance by Quarter",
+        "type": "grouped_bar_chart",
+        "query": "SELECT CONCAT('Q', quarter, ' ', year) as quarter_year, SUM(total_budget) as budget, SUM(total_actual_cost) as actual FROM analytics.vw_CostAnalysis WHERE year >= YEAR(GETDATE()) - 1 GROUP BY year, quarter ORDER BY year, quarter",
+        "visualization": {
+          "x_axis": "quarter_year",
+          "y_axes": ["budget", "actual"]
+        }
+      }
+    ]
+  },
+
+  "predictive_dashboard": {
+    "title": "PT XYZ Predictive Analytics",
+    "description": "Predictive insights and forecasting",
+    "panels": [
+      {
+        "id": "pred_maintenance_risk",
+        "title": "Equipment Maintenance Risk Matrix",
+        "type": "scatter_plot",
+        "query": "SELECT equipment_name, monthly_efficiency * 100 as efficiency, monthly_maintenance_cost, maintenance_risk_level, site_name FROM analytics.vw_MaintenancePrediction",
+        "visualization": {
+          "x_axis": "efficiency",
+          "y_axis": "monthly_maintenance_cost",
+          "color_metric": "maintenance_risk_level",
+          "size_metric": "site_name"
+        }
+      },
+      {
+        "id": "pred_production_forecast",
+        "title": "Production Forecast vs Actual",
+        "type": "line_chart",
+        "query": "SELECT CONCAT(year, '-', RIGHT('0' + CAST(month AS VARCHAR), 2)) as period, site_name, monthly_production as actual, forecasted_next_month as forecast, forecast_confidence FROM analytics.vw_ProductionForecast ORDER BY year, month",
+        "visualization": {
+          "x_axis": "period",
+          "y_axes": ["actual", "forecast"],
+          "series": "site_name",
+          "confidence_intervals": "forecast_confidence"
+        }
+      },
+      {
+        "id": "pred_trend_analysis",
+        "title": "Production Trend Analysis",
+        "type": "area_chart",
+        "query": "SELECT site_name, production_trend, COUNT(*) as count FROM analytics.vw_ProductionForecast GROUP BY site_name, production_trend",
+        "visualization": {
+          "x_axis": "site_name",
+          "y_axis": "count",
+          "series": "production_trend",
+          "stacked": true
+        }
+      },
+      {
+        "id": "pred_maintenance_schedule",
+        "title": "Recommended Maintenance Schedule",
+        "type": "gantt_chart",
+        "query": "SELECT equipment_name, site_name, recommendation, maintenance_risk_level, GETDATE() as start_date, DATEADD(day, CASE WHEN maintenance_risk_level = 'High Risk' THEN 7 WHEN maintenance_risk_level = 'Medium Risk' THEN 14 ELSE 30 END, GETDATE()) as end_date FROM analytics.vw_MaintenancePrediction WHERE recommendation != 'Continue Monitoring'",
+        "visualization": {
+          "task": "equipment_name",
+          "start": "start_date",
+          "end": "end_date",
+          "color_metric": "maintenance_risk_level"
+        }
+      }
+    ]
+  },
+
+  "drill_down_dashboard": {
+    "title": "PT XYZ Detailed Analytics",
+    "description": "Detailed drill-down analysis and exploration",
+    "panels": [
+      {
+        "id": "drill_equipment_details",
+        "title": "Equipment Performance Details",
+        "type": "detailed_table",
+        "query": "SELECT equipment_name, site_name, date, operating_hours, downtime_hours, efficiency_ratio * 100 as efficiency_percent, fuel_consumption, maintenance_cost, performance_category, downtime_category FROM analytics.vw_EquipmentDrillDown ORDER BY date DESC, efficiency_ratio DESC",
+        "visualization": {
+          "pagination": true,
+          "filters": ["equipment_name", "site_name", "performance_category"],
+          "sorting": true
+        }
+      },
+      {
+        "id": "drill_production_details", 
+        "title": "Production Session Details",
+        "type": "detailed_table",
+        "query": "SELECT production_id, site_name, material_name, date, operator_name, shift_name, produced_volume, unit_cost, total_cost, material_efficiency, production_category FROM analytics.vw_ProductionDrillDown ORDER BY date DESC, produced_volume DESC",
+        "visualization": {
+          "pagination": true,
+          "filters": ["site_name", "material_type", "operator_name", "production_category"],
+          "sorting": true
+        }
+      },
+      {
+        "id": "drill_time_analysis",
+        "title": "Time-based Performance Analysis", 
+        "type": "heatmap",
+        "query": "SELECT DATENAME(weekday, date) as day_of_week, DATEPART(hour, date) as hour_of_day, AVG(efficiency_ratio) * 100 as avg_efficiency FROM analytics.vw_EquipmentDrillDown GROUP BY DATENAME(weekday, date), DATEPART(hour, date)",
+        "visualization": {
+          "x_axis": "hour_of_day",
+          "y_axis": "day_of_week", 
+          "value": "avg_efficiency",
+          "color_scheme": "red_yellow_green"
+        }
+      },
+      {
+        "id": "drill_cost_analysis",
+        "title": "Detailed Cost Analysis",
+        "type": "treemap",
+        "query": "SELECT site_name, material_type, SUM(total_cost) as total_cost, COUNT(*) as session_count FROM analytics.vw_ProductionDrillDown GROUP BY site_name, material_type",
+        "visualization": {
+          "hierarchy": ["site_name", "material_type"],
+          "value": "total_cost",
+          "color_metric": "session_count"
+        }
+      }
+    ]
+  },
+
+  "real_time_dashboard": {
+    "title": "PT XYZ Real-Time Monitoring",
+    "description": "Live operational monitoring and alerts",
+    "refresh_interval": "30s",
+    "panels": [
+      {
+        "id": "rt_current_operations",
+        "title": "Current Operations Status",
+        "type": "status_grid",
+        "query": "SELECT site_name, COUNT(DISTINCT equipment_name) as active_equipment, SUM(week_operating_hours) as total_hours, AVG(current_efficiency) * 100 as avg_efficiency, performance_status FROM analytics.vw_EquipmentStatus GROUP BY site_name, performance_status",
+        "visualization": {
+          "grid_metric": "avg_efficiency",
+          "status_colors": {
+            "Excellent": "green",
+            "Good": "yellow",
+            "Fair": "orange", 
+            "Needs Attention": "red"
+          }
+        }
+      },
+      {
+        "id": "rt_alerts",
+        "title": "Active Alerts",
+        "type": "alert_feed",
+        "query": "SELECT equipment_name, site_name, maintenance_risk_level as alert_level, recommendation as message, GETDATE() as timestamp FROM analytics.vw_MaintenancePrediction WHERE maintenance_risk_level IN ('High Risk', 'Medium Risk') UNION ALL SELECT site_name, region, budget_status, CONCAT('Budget variance: ', CAST(budget_variance_percent AS VARCHAR), '%'), GETDATE() FROM analytics.vw_CostAnalysis WHERE ABS(budget_variance_percent) > 10",
+        "visualization": {
+          "alert_levels": {
+            "High Risk": "critical",
+            "Medium Risk": "warning",
+            "Over Budget": "warning"
+          }
+        }
+      },
+      {
+        "id": "rt_production_rate",
+        "title": "Real-Time Production Rate",
+        "type": "gauge",
+        "query": "SELECT AVG(hourly_production) as current_rate, MAX(hourly_production) as max_rate FROM analytics.vw_HourlyOperationsSummary WHERE date = CAST(GETDATE() AS DATE)",
+        "visualization": {
+          "min": 0,
+          "max": "max_rate",
+          "thresholds": [
+            {"value": 70, "color": "green"},
+            {"value": 50, "color": "yellow"},
+            {"value": 30, "color": "orange"},
+            {"value": 0, "color": "red"}
+          ]
+        }
+      }
+    ]
+  },
+
+  "mobile_dashboard": {
+    "title": "PT XYZ Mobile Dashboard",
+    "description": "Mobile-optimized view for field operations",
+    "layout": "mobile",
+    "panels": [
+      {
+        "id": "mob_kpi_cards",
+        "title": "Key Metrics",
+        "type": "metric_cards",
+        "query": "SELECT 'Production' as metric, total_production_current as value, 'tons' as unit FROM analytics.vw_ExecutiveKPIs UNION ALL SELECT 'Efficiency', avg_equipment_efficiency_current * 100, '%' UNION ALL SELECT 'Budget Variance', budget_variance_percent, '%' UNION ALL SELECT 'Active Sites', active_sites_current, 'sites'",
+        "visualization": {
+          "card_layout": "2x2"
+        }
+      },
+      {
+        "id": "mob_alerts",
+        "title": "Critical Alerts",
+        "type": "list",
+        "query": "SELECT equipment_name, maintenance_risk_level, recommendation FROM analytics.vw_MaintenancePrediction WHERE maintenance_risk_level = 'High Risk' ORDER BY equipment_name",
+        "visualization": {
+          "max_items": 5
+        }
+      },
+      {
+        "id": "mob_site_status",
+        "title": "Site Status",
+        "type": "status_list",
+        "query": "SELECT site_name, performance_status, ROUND(site_avg_efficiency * 100, 0) as efficiency FROM analytics.vw_SiteProductionPerformance ORDER BY site_avg_efficiency DESC",
+        "visualization": {
+          "status_icons": true
+        }
+      }
+    ]
+  },
+
+  "data_sources": {
+    "primary": {
+      "type": "sql_server",
+      "connection_string": "mssql+pyodbc://sa:YourSecurePassword123!@sqlserver:1433/PTXYZ_DataWarehouse?driver=ODBC+Driver+17+for+SQL+Server",
+      "database": "PTXYZ_DataWarehouse"
+    }
+  },
+
+  "filters": {
+    "global": [
+      {
+        "name": "date_range",
+        "type": "date_range",
+        "default": "last_30_days"
+      },
+      {
+        "name": "region",
+        "type": "select",
+        "query": "SELECT DISTINCT region FROM dim.DimSite ORDER BY region",
+        "multi_select": true
+      },
+      {
+        "name": "site",
+        "type": "select", 
+        "query": "SELECT DISTINCT site_name FROM dim.DimSite ORDER BY site_name",
+        "multi_select": true,
+        "depends_on": "region"
+      },
+      {
+        "name": "equipment_type",
+        "type": "select",
+        "query": "SELECT DISTINCT equipment_type FROM dim.DimEquipment ORDER BY equipment_type",
+        "multi_select": true
+      }
+    ]
+  },
+
+  "permissions": {
+    "executive": ["executive_dashboard", "financial_dashboard", "predictive_dashboard"],
+    "operations": ["operations_dashboard", "real_time_dashboard", "drill_down_dashboard"],
+    "analyst": ["all"],
+    "field": ["mobile_dashboard", "real_time_dashboard"]
+  },
+
+  "export_options": {
+    "pdf": true,
+    "excel": true,
+    "csv": true,
+    "email_reports": true
+  },
+
+  "metadata": {
+    "total_panels": 35,
+    "dashboard_count": 7,
+    "data_refresh_frequency": "15 minutes",
+    "supported_devices": ["desktop", "tablet", "mobile"]
+  }
+}

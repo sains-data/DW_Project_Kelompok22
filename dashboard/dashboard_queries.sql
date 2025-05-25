@@ -9,8 +9,10 @@ SELECT
     s.site_name,
     COUNT(*) as usage_sessions,
     AVG(f.operating_hours) as avg_operating_hours,
+    AVG(f.downtime_hours) as avg_downtime_hours,
     SUM(f.fuel_consumption) as total_fuel_consumption,
-    AVG(f.maintenance_hours) as avg_maintenance_hours
+    AVG(f.maintenance_cost) as avg_maintenance_cost,
+    AVG(f.efficiency_ratio) as avg_efficiency_ratio
 FROM fact.FactEquipmentUsage f
 JOIN dim.DimEquipment e ON f.equipment_key = e.equipment_key
 JOIN dim.DimSite s ON f.site_key = s.site_key
@@ -23,16 +25,18 @@ ORDER BY total_fuel_consumption DESC;
 SELECT 
     t.year,
     t.month,
+    t.month_name,
     s.site_name,
     m.material_type,
-    SUM(f.tonnage_produced) as total_production,
-    AVG(f.quality_score) as avg_quality_score,
+    SUM(f.produced_volume) as total_production,
+    AVG(f.unit_cost) as avg_unit_cost,
+    SUM(f.total_cost) as total_cost,
     COUNT(*) as production_sessions
 FROM fact.FactProduction f
 JOIN dim.DimTime t ON f.time_key = t.time_key
 JOIN dim.DimSite s ON f.site_key = s.site_key
 JOIN dim.DimMaterial m ON f.material_key = m.material_key
-GROUP BY t.year, t.month, s.site_name, m.material_type
+GROUP BY t.year, t.month, t.month_name, s.site_name, m.material_type
 ORDER BY t.year DESC, t.month DESC, total_production DESC;
 
 -- 3. Financial Analysis Dashboard
@@ -42,9 +46,11 @@ SELECT
     s.site_name,
     a.account_type,
     a.account_name,
-    SUM(f.transaction_amount) as total_amount,
-    COUNT(*) as transaction_count,
-    AVG(f.transaction_amount) as avg_transaction_amount
+    SUM(f.budgeted_cost) as total_budgeted,
+    SUM(f.actual_cost) as total_actual,
+    SUM(f.variance_amount) as total_variance,
+    AVG(f.variance_percentage) as avg_variance_percentage,
+    COUNT(*) as transaction_count
 FROM fact.FactFinancialTransaction f
 JOIN dim.DimTime t ON f.time_key = t.time_key
 JOIN dim.DimSite s ON f.site_key = s.site_key

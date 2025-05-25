@@ -1,0 +1,222 @@
+{
+  "superset_dashboards": {
+    "executive_dashboard": {
+      "title": "PT XYZ Executive Dashboard",
+      "description": "High-level KPIs and performance metrics for executive team",
+      "charts": [
+        {
+          "chart_id": "equipment_efficiency_kpi",
+          "title": "Equipment Efficiency %",
+          "chart_type": "big_number",
+          "sql": "SELECT AVG(efficiency_ratio) * 100 as efficiency FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE())",
+          "format": "percentage",
+          "position": {"x": 0, "y": 0, "w": 3, "h": 2}
+        },
+        {
+          "chart_id": "total_production_kpi",
+          "title": "Total Production (30 days)",
+          "chart_type": "big_number",
+          "sql": "SELECT SUM(produced_volume) as total_production FROM fact.FactProduction f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE())",
+          "format": "number",
+          "position": {"x": 3, "y": 0, "w": 3, "h": 2}
+        },
+        {
+          "chart_id": "budget_variance_kpi",
+          "title": "Budget Variance %",
+          "chart_type": "big_number",
+          "sql": "SELECT AVG(variance_percentage) as avg_variance FROM fact.FactFinancialTransaction f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE())",
+          "format": "percentage",
+          "position": {"x": 6, "y": 0, "w": 3, "h": 2}
+        },
+        {
+          "chart_id": "production_by_site",
+          "title": "Production by Site",
+          "chart_type": "bar",
+          "sql": "SELECT s.site_name, SUM(f.produced_volume) as production FROM fact.FactProduction f JOIN dim.DimSite s ON f.site_key = s.site_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY s.site_name ORDER BY production DESC",
+          "position": {"x": 0, "y": 2, "w": 6, "h": 4}
+        },
+        {
+          "chart_id": "equipment_efficiency_trend",
+          "title": "Equipment Efficiency Trend",
+          "chart_type": "line",
+          "sql": "SELECT t.date, AVG(f.efficiency_ratio) * 100 as efficiency FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY t.date ORDER BY t.date",
+          "position": {"x": 6, "y": 2, "w": 6, "h": 4}
+        }
+      ]
+    },
+    "operations_dashboard": {
+      "title": "PT XYZ Operations Dashboard",
+      "description": "Detailed operational metrics for site managers and operations team",
+      "charts": [
+        {
+          "chart_id": "equipment_utilization_by_type",
+          "title": "Equipment Utilization by Type",
+          "chart_type": "pie",
+          "sql": "SELECT e.equipment_type, SUM(f.operating_hours) as total_hours FROM fact.FactEquipmentUsage f JOIN dim.DimEquipment e ON f.equipment_key = e.equipment_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -7, GETDATE()) GROUP BY e.equipment_type",
+          "position": {"x": 0, "y": 0, "w": 4, "h": 4}
+        },
+        {
+          "chart_id": "fuel_consumption_by_site",
+          "title": "Fuel Consumption by Site",
+          "chart_type": "bar",
+          "sql": "SELECT s.site_name, SUM(f.fuel_consumption) as total_fuel FROM fact.FactEquipmentUsage f JOIN dim.DimSite s ON f.site_key = s.site_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -7, GETDATE()) GROUP BY s.site_name ORDER BY total_fuel DESC",
+          "position": {"x": 4, "y": 0, "w": 4, "h": 4}
+        },
+        {
+          "chart_id": "daily_production_trend",
+          "title": "Daily Production Trend",
+          "chart_type": "line",
+          "sql": "SELECT t.date, SUM(f.produced_volume) as daily_production FROM fact.FactProduction f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY t.date ORDER BY t.date",
+          "position": {"x": 8, "y": 0, "w": 4, "h": 4}
+        },
+        {
+          "chart_id": "maintenance_costs_by_equipment",
+          "title": "Maintenance Costs by Equipment Type",
+          "chart_type": "bar",
+          "sql": "SELECT e.equipment_type, SUM(f.maintenance_cost) as total_maintenance FROM fact.FactEquipmentUsage f JOIN dim.DimEquipment e ON f.equipment_key = e.equipment_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY e.equipment_type ORDER BY total_maintenance DESC",
+          "position": {"x": 0, "y": 4, "w": 6, "h": 4}
+        },
+        {
+          "chart_id": "production_by_material_type",
+          "title": "Production by Material Type",
+          "chart_type": "donut",
+          "sql": "SELECT m.material_type, SUM(f.produced_volume) as production FROM fact.FactProduction f JOIN dim.DimMaterial m ON f.material_key = m.material_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY m.material_type",
+          "position": {"x": 6, "y": 4, "w": 6, "h": 4}
+        }
+      ]
+    },
+    "financial_dashboard": {
+      "title": "PT XYZ Financial Dashboard",
+      "description": "Financial performance and budget analysis for finance team",
+      "charts": [
+        {
+          "chart_id": "budget_vs_actual_monthly",
+          "title": "Monthly Budget vs Actual",
+          "chart_type": "mixed_chart",
+          "sql": "SELECT t.month_name, SUM(f.budgeted_cost) as budget, SUM(f.actual_cost) as actual FROM fact.FactFinancialTransaction f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.year = YEAR(GETDATE()) GROUP BY t.month, t.month_name ORDER BY t.month",
+          "position": {"x": 0, "y": 0, "w": 8, "h": 4}
+        },
+        {
+          "chart_id": "variance_by_project",
+          "title": "Top Variance by Project",
+          "chart_type": "bar",
+          "sql": "SELECT TOP 10 p.project_name, SUM(f.variance_amount) as total_variance FROM fact.FactFinancialTransaction f JOIN dim.DimProject p ON f.project_key = p.project_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -90, GETDATE()) GROUP BY p.project_name ORDER BY ABS(total_variance) DESC",
+          "position": {"x": 8, "y": 0, "w": 4, "h": 4}
+        },
+        {
+          "chart_id": "costs_by_account_type",
+          "title": "Costs by Account Type",
+          "chart_type": "pie",
+          "sql": "SELECT a.account_type, SUM(f.actual_cost) as total_cost FROM fact.FactFinancialTransaction f JOIN dim.DimAccount a ON f.account_key = a.account_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY a.account_type",
+          "position": {"x": 0, "y": 4, "w": 4, "h": 4}
+        },
+        {
+          "chart_id": "regional_financial_performance",
+          "title": "Regional Financial Performance",
+          "chart_type": "table",
+          "sql": "SELECT s.region, SUM(f.budgeted_cost) as budget, SUM(f.actual_cost) as actual, SUM(f.variance_amount) as variance, AVG(f.variance_percentage) as avg_variance_pct FROM fact.FactFinancialTransaction f JOIN dim.DimSite s ON f.site_key = s.site_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date >= DATEADD(day, -30, GETDATE()) GROUP BY s.region ORDER BY variance DESC",
+          "position": {"x": 4, "y": 4, "w": 8, "h": 4}
+        }
+      ]
+    }
+  },
+  "grafana_dashboards": {
+    "real_time_monitoring": {
+      "title": "PT XYZ Real-Time Monitoring",
+      "description": "Real-time operational monitoring dashboard",
+      "panels": [
+        {
+          "panel_id": "equipment_status",
+          "title": "Equipment Status",
+          "type": "stat",
+          "sql": "SELECT COUNT(DISTINCT equipment_key) as active_equipment FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date = CAST(GETDATE() AS DATE) AND f.operating_hours > 0",
+          "position": {"x": 0, "y": 0, "w": 3, "h": 3}
+        },
+        {
+          "panel_id": "current_efficiency",
+          "title": "Current Efficiency",
+          "type": "gauge",
+          "sql": "SELECT AVG(efficiency_ratio) * 100 as current_efficiency FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date = CAST(GETDATE() AS DATE)",
+          "position": {"x": 3, "y": 0, "w": 3, "h": 3}
+        },
+        {
+          "panel_id": "daily_production",
+          "title": "Today's Production",
+          "type": "stat",
+          "sql": "SELECT SUM(produced_volume) as daily_production FROM fact.FactProduction f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE t.date = CAST(GETDATE() AS DATE)",
+          "position": {"x": 6, "y": 0, "w": 3, "h": 3}
+        },
+        {
+          "panel_id": "equipment_efficiency_timeline",
+          "title": "Equipment Efficiency Over Time",
+          "type": "timeseries",
+          "sql": "SELECT $__time(t.date), e.equipment_type as metric, AVG(f.efficiency_ratio) * 100 as efficiency FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key JOIN dim.DimEquipment e ON f.equipment_key = e.equipment_key WHERE $__timeFilter(t.date) GROUP BY t.date, e.equipment_type ORDER BY t.date",
+          "position": {"x": 0, "y": 3, "w": 12, "h": 6}
+        },
+        {
+          "panel_id": "site_production_comparison",
+          "title": "Site Production Comparison",
+          "type": "barchart",
+          "sql": "SELECT s.site_name as metric, SUM(f.produced_volume) as production FROM fact.FactProduction f JOIN dim.DimSite s ON f.site_key = s.site_key JOIN dim.DimTime t ON f.time_key = t.time_key WHERE $__timeFilter(t.date) GROUP BY s.site_name ORDER BY production DESC",
+          "position": {"x": 0, "y": 9, "w": 6, "h": 6}
+        },
+        {
+          "panel_id": "fuel_consumption_trend",
+          "title": "Fuel Consumption Trend",
+          "type": "timeseries",
+          "sql": "SELECT $__time(t.date), SUM(f.fuel_consumption) as fuel_consumption FROM fact.FactEquipmentUsage f JOIN dim.DimTime t ON f.time_key = t.time_key WHERE $__timeFilter(t.date) GROUP BY t.date ORDER BY t.date",
+          "position": {"x": 6, "y": 9, "w": 6, "h": 6}
+        }
+      ]
+    }
+  },
+  "connection_strings": {
+    "sql_server": {
+      "superset": "mssql+pymssql://sa:PTXYZSecure123!@sqlserver:1433/PTXYZ_DataWarehouse",
+      "grafana": {
+        "host": "sqlserver:1433",
+        "database": "PTXYZ_DataWarehouse",
+        "user": "sa",
+        "password": "PTXYZSecure123!"
+      },
+      "metabase": {
+        "host": "sqlserver",
+        "port": 1433,
+        "database": "PTXYZ_DataWarehouse",
+        "username": "sa",
+        "password": "PTXYZSecure123!"
+      }
+    }
+  },
+  "setup_instructions": {
+    "superset": [
+      "1. Access http://localhost:8088",
+      "2. Login with admin/admin",
+      "3. Go to Settings > Database Connections",
+      "4. Add Microsoft SQL Server database",
+      "5. Use SQLAlchemy URI: mssql+pymssql://sa:PTXYZSecure123!@sqlserver:1433/PTXYZ_DataWarehouse",
+      "6. Test connection and save",
+      "7. Create datasets from fact and dimension tables",
+      "8. Build charts using the provided SQL queries"
+    ],
+    "grafana": [
+      "1. Access http://localhost:3000",
+      "2. Login with admin/admin",
+      "3. Go to Configuration > Data Sources",
+      "4. Add Microsoft SQL Server",
+      "5. Configure connection: sqlserver:1433, PTXYZ_DataWarehouse, sa/PTXYZSecure123!",
+      "6. Test connection and save",
+      "7. Create dashboard panels using provided queries",
+      "8. Use $__timeFilter() for time range filtering"
+    ],
+    "metabase": [
+      "1. Access http://localhost:3001",
+      "2. Complete initial setup wizard",
+      "3. Add SQL Server database",
+      "4. Host: sqlserver, Port: 1433, Database: PTXYZ_DataWarehouse",
+      "5. Username: sa, Password: PTXYZSecure123!",
+      "6. Let Metabase auto-scan tables",
+      "7. Create questions and dashboards from discovered tables"
+    ]
+  }
+}

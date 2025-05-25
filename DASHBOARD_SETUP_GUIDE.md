@@ -15,7 +15,7 @@ Host: localhost (or sqlserver from within Docker network)
 Port: 1433
 Database: PTXYZ_DataWarehouse
 Username: sa
-Password: YourSecurePassword123!
+Password: PTXYZSecure123!
 ```
 
 ---
