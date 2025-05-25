@@ -79,9 +79,9 @@ After startup, access these URLs:
 
 ## 📊 Service Details
 
-### 🔄 Apache Airflow - ETL Orchestration
+### 🔄 Apache Airflow - 🔄 ETL Orchestration
 - **URL**: http://localhost:8080
-- **Purpose**: Schedules and monitors ETL pipelines
+- **Purpose**: Automates and schedules ETL tasks to extract, transform, and load data into the SQL Server Data Warehouse.
 - **Key Features**:
   - Automated data extraction from CSV sources
   - Data transformation and cleaning
