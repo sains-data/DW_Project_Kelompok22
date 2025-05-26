@@ -241,10 +241,9 @@ For issues:
 
 ---
 
-**🎯 PT XYZ Data Warehouse - Complete Docker Environment Ready!**
-    end
-```
+🎯 **PT XYZ Data Warehouse - Complete Docker Environment Ready!**
 
+---
 ## 🚀 Fitur Utama
 
 ### 📊 **Dashboard & Visualisasi**
