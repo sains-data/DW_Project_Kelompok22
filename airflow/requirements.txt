@@ -1,4 +1,4 @@
-pandas==2.1.4
+pandas==2.3.0
 pyodbc==5.0.1
 sqlalchemy==1.4.53
 pymssql==2.2.11
